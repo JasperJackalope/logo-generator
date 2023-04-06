@@ -1,6 +1,5 @@
-const fs = require('fs');
+const fs = require('fs').promises;
 const inquirer = require('inquirer');
-const SVG = require('svg.js');
 
 const questions = [
   {
@@ -21,47 +20,33 @@ const questions = [
     name: 'shape',
     message: 'Please select the shape for the logo:',
     choices: [
-     'Circle',
-     'Triangle',
-     'Square'
+      'Circle',
+      'Triangle',
+      'Square'
     ]
   },
   {
-   type: 'input',
-   name: 'shapeColor',
-   message: 'Shape Color - please enter the hexadecimal code:',
+    type: 'input',
+    name: 'shapeColor',
+    message: 'Shape Color - please enter the hexadecimal code:',
   }
-]
+];
 
-inquirer.prompt(questions)
-  .then(answers => {
-    const { text, textColor, shape, shapeColor } = answers;
+inquirer.prompt(questions).then((answers) => {
+  // Create the SVG string based on the user's input
+  const svgString = `
+    <svg width="300" height="200">
+      <rect x="0" y="0" width="300" height="200" fill="${answers.shapeColor}" />
+      <text x="150" y="100" fill="${answers.textColor}" font-size="100" text-anchor="middle">${answers.text}</text>
+    </svg>
+  `;
 
-    const svg = SVG().size(300, 200);
-
-    // Draw the shape
-    let shapeElement;
-    switch (shape) {
-      case 'Circle':
-        shapeElement = svg.circle(100).fill(shapeColor).move(50, 50);
-        break;
-      case 'Triangle':
-        shapeElement = svg.polygon('0,100 50,0 100,100').fill(shapeColor).move(50, 50);
-        break;
-      case 'Square':
-        shapeElement = svg.rect(100, 100).fill(shapeColor).move(50, 50);
-        break;
-    }
-
-    // Draw the text
-    const textElement = svg.text(text).fill(textColor).move(100, 75);
-
-    // Get the SVG markup
-    const svgMarkup = svg.svg();
-
-    // Write the SVG markup to a file
-    fs.writeFileSync('logo.svg', svgMarkup);
-
-    console.log('Generated logo.svg');
-  })
-  .catch(err => console.error(err));
+  // Write the SVG string to a file
+  fs.writeFile('logo.svg', svgString)
+    .then(() => {
+      console.log('Generated logo.svg');
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+});
