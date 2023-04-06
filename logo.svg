@@ -1,9 +1,1 @@
-
-    <svg width="300" height="200">
-      <rect x="0" y="0" width="300" height="200" fill="orange"/>
-      <text x="50%" y="50%" text-anchor="middle" alignment-baseline="middle" fill="Blue">ABC</text>
-      <circle cx="150" cy="100" r="50" fill="none" stroke-width="10" stroke="#ffffff"/>
-      
-      
-    </svg>
-  
+<svg version="1.1" width="300" height="200" xmlns="http://www.w3.org/2000/svg"><polygon points="150, 18 244, 182 56, 182" fill="blue" /><text x="150" y="125" font-size="60" text-anchor="middle" fill="black">ABC</text></svg>

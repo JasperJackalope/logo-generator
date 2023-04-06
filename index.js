@@ -1,53 +1,69 @@
 const fs = require('fs').promises;
 const inquirer = require('inquirer');
+const { Circle, Triangle, Square } = require('./lib/shapes.js');
+const { SVG } = require('./lib/svg.js');
 
 const questions = [
   {
     type: 'input',
     name: 'text',
     message: 'Please enter up to three characters for the logo:',
-    validate: function(text) {
+    validate: function (text) {
       return text.length <= 3;
-    }
+    },
   },
   {
     type: 'input',
     name: 'textColor',
-    message: 'Please enter the text color:'
+    message: 'Please enter the text color:',
   },
   {
     type: 'list',
     name: 'shape',
     message: 'Please select the shape for the logo:',
-    choices: [
-      'Circle',
-      'Triangle',
-      'Square'
-    ]
+    choices: ['Circle', 'Triangle', 'Square'],
   },
   {
     type: 'input',
     name: 'shapeColor',
     message: 'Please enter the shape color:',
-  }
+  },
 ];
 
-inquirer.prompt(questions).then(async (answers) => {
-  const { text, textColor, shape, shapeColor } = answers;
+inquirer
+  .prompt(questions)
+  .then((answers) => {
+    const { text, textColor, shape, shapeColor } = answers;
 
-  // Generate the SVG code based on the user input
-  const svg = `
-    <svg width="300" height="200">
-      <rect x="0" y="0" width="300" height="200" fill="${shapeColor}"/>
-      <text x="50%" y="50%" text-anchor="middle" alignment-baseline="middle" fill="${textColor}">${text}</text>
-      ${shape === 'Circle' ? '<circle cx="150" cy="100" r="50" fill="none" stroke-width="10" stroke="#ffffff"/>' : ''}
-      ${shape === 'Triangle' ? '<polygon points="150,30 50,170 250,170" fill="none" stroke-width="10" stroke="#ffffff"/>' : ''}
-      ${shape === 'Square' ? '<rect x="50" y="50" width="200" height="100" fill="none" stroke-width="10" stroke="#ffffff"/>' : ''}
-    </svg>
-  `;
+    const svg = new SVG();
 
-  // Save the SVG code to a file
-  await fs.writeFile('logo.svg', svg);
+    switch (shape) {
+      case 'Circle':
+        const circle = new Circle();
+        circle.setColor(shapeColor);
+        svg.finalShape = circle.render();
+        break;
+      case 'Triangle':
+        const triangle = new Triangle();
+        triangle.setColor(shapeColor);
+        svg.finalShape = triangle.render();
+        break;
+      case 'Square':
+        const square = new Square();
+        square.setColor(shapeColor);
+        svg.finalShape = square.render();
+        break;
+    }
 
-  console.log('Generated logo.svg');
-});
+    svg.setText(text, textColor);
+
+    const logo = svg.render();
+
+    return fs.writeFile('logo.svg', logo);
+  })
+  .then(() => {
+    console.log('Logo created successfully!');
+  })
+  .catch((err) => {
+    console.error('Error creating logo:', err);
+  });
