@@ -62,8 +62,8 @@ inquirer
     return fs.writeFile('logo.svg', logo);
   })
   .then(() => {
-    console.log('Logo created successfully!');
+    console.log('Logo SVG created successfully!');
   })
   .catch((err) => {
-    console.error('Error creating logo:', err);
+    console.error('Error creating Logo SVG:', err);
   });
